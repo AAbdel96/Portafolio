@@ -6,16 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 //Inyeccion de dependencias
 builder.Services.AddTransient<IRepositorioProyectos,RepositorioProyectos>();
-
-
-
-//pruebas
-
-
-builder.Services.AddTransient<ServicioTransitorio>();
-builder.Services.AddScoped<ServicioDelimitado>();
-builder.Services.AddSingleton<ServicioUnico>();
-
+builder.Services.AddTransient<IServicioEmail,ServicioEmailSendGrid>();
 
 
 var app = builder.Build();

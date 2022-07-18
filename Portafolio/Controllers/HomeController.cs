@@ -7,27 +7,49 @@ namespace Portafolio.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IRepositorioProyectos repositorioProyectos;
+        private readonly IServicioEmail servicioEmail;
 
-        public HomeController(ILogger<HomeController> logger, IRepositorioProyectos repositorioProyectos)
+        public HomeController(
+            IRepositorioProyectos repositorioProyectos,
+            IConfiguration configuration,
+            IServicioEmail servicioEmail)
         {
-            _logger = logger;
+
             this.repositorioProyectos = repositorioProyectos;
+            this.servicioEmail = servicioEmail;
         }
 
-        
+        [HttpGet]
         public IActionResult Index()
         {
-            
-
-            var proyectos = repositorioProyectos.ObtenerProyectos().ToList();
+            var proyectos = repositorioProyectos.ObtenerProyectos().Take(3).ToList();
             var modelo = new HomeIndexViewModel() { Proyectos = proyectos };
             return View(modelo);
 
         }
+        [HttpGet]
+        public IActionResult Proyectos()
+        {
+            var proyectos = repositorioProyectos.ObtenerProyectos();
+           
+            return View(proyectos);
+        }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public IActionResult Contacto()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Contacto(ContactoViewModel contactoViewModel)
+        {
+            await servicioEmail.Enviar(contactoViewModel);
+            return RedirectToAction("Gracias");
+        }
+
+        public IActionResult Gracias()
         {
             return View();
         }
